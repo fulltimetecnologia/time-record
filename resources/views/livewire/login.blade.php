@@ -38,11 +38,15 @@ class extends Component {
     }
 } ?>
 
-
-<div class="min-h-screen flex items-center justify-center">
+<div class="grid gap-8 md:grid-cols-3">
     <div class="text-center order-last md:order-first">
-        <img src="images/timeline.svg" width="300" class="mx-auto" alt="Timeline" />
-        <x-card title="{{ __('menu.home') }}" class="px-8" shadow separator>
+        <img src="images/timeline.svg" width="400" class="mx-auto" alt="Timeline" />
+    </div>
+    <div>
+        <x-card title="{{ __('menu.home')}}" class="px-8" shadow separator>
+            <div class="mb-8">
+                Faça login para acessar o sistema e registrar seu ponto.
+            </div>
             <x-form wire:submit="login">
                 <x-input label="{{ __('login.email') }}" wire:model="email" icon="o-envelope" inline />
                 <x-input label="{{ __('login.password') }}" wire:model="password" type="password" icon="o-key" inline />
@@ -51,6 +55,14 @@ class extends Component {
                     <x-button label="{{ __('login.login') }}" type="submit" icon="o-paper-airplane" class="btn-primary text-white" spinner="login" />
                 </x-slot:actions>
             </x-form>
+        </x-card>
+    </div>
+    <div class="mb-5">
+        <x-card shadow>
+            <x-icon name="o-lifebuoy" class="w-10 h-10" />
+            <div class="my-5">
+                Contato do suporte: tecnologia.fulltime@gmail.com
+            </div>
         </x-card>
     </div>
 </div>

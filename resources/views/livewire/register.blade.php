@@ -53,7 +53,7 @@ class extends Component {
 
 <div class="md:w-96 mx-auto mt-20">
     <div class="avatar-container">
-        <x-avatar image="images/logo.png" class="!w-32" />
+        <x-avatar image="images/timeline.svg" class="!w-72" />
     </div>
     <x-form wire:submit="register">
         <x-input label="{{ __('register.name') }}" wire:model="name" icon="o-user" inline />
