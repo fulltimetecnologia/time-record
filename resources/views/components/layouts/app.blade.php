@@ -19,8 +19,7 @@
             </x-slot:actions>
         </x-nav>
         <x-main full-width>
-            <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-100 lg:bg-inherit">
-                <x-app-brand class="p-5 pt-3" />
+            <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-100">
                 <x-menu activate-by-route>
                     @if($user = auth()->user())
                         <x-menu-separator />
@@ -31,8 +30,8 @@
                             </x-list-item>
                         <x-menu-separator />
                     @endif
-                    <x-menu-item title="{{ __('menu.home') }}" icon="o-sparkles" link="/" /> 
-                    <x-menu-item title="{{ __('menu.users') }}" icon="o-users" link="/users" /> 
+                    <x-menu-item title="{{ __('menu.home') }}" icon="o-sparkles" link="/" />
+                    <x-menu-item title="{{ __('menu.users') }}" icon="o-users" link="/users" />
                 </x-menu>
             </x-slot:sidebar>
             <x-slot:content>
@@ -40,6 +39,6 @@
             </x-slot:content>
         </x-main>
         <x-toast />
-        <x-spotlight />  
+        <x-spotlight />
     </body>
 </html>
