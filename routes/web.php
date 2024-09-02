@@ -14,7 +14,7 @@ Route::get('/logout', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Volt::route('/', 'index');
+    Volt::route('/', 'time-record.index');
     Volt::route('/users', 'users.index');
     Volt::route('/users/create', 'users.create');
     Volt::route('/users/{user}/edit', 'users.edit');
