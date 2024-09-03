@@ -44,10 +44,10 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'user.name', 'label' => 'Funcionário', 'class' => 'w-64'],
-            ['key' => 'created_at', 'label' =>  'Data', 'sortable' => false],
-            ['key' => 'start_at', 'label' =>  'Entrada', 'sortable' => false],
-            ['key' => 'end_at', 'label' =>  'Saída', 'sortable' => false],
+            ['key' => 'user.name', 'label' => __('time-record.employee'), 'class' => 'w-64'],
+            ['key' => 'created_at', 'label' => __('time-record.date'), 'sortable' => false],
+            ['key' => 'start_at', 'label' => __('time-record.start'), 'sortable' => false],
+            ['key' => 'end_at', 'label' => __('time-record.end'), 'sortable' => false],
         ];
     }
 
@@ -69,8 +69,6 @@ new class extends Component {
             ->orderBy(...array_values($this->sortBy))
             ->paginate(5);
     }
-
-
 
     public function with(): array
     {
@@ -99,7 +97,6 @@ new class extends Component {
         <x-slot:actions>
             <x-button label="{{__('screens.filters')}}" @click="$wire.drawer = true" responsive icon="o-funnel" :badge="$this->countAppliedFilters()" />
             <x-button label="{{__('time-record.create')}}" wire:click="save" responsive icon="o-plus" class="btn-primary" />
-
         </x-slot:actions>
     </x-header>
     <x-card>

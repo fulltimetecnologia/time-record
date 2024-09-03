@@ -26,7 +26,6 @@ Sistema de registro de ponto de funcionários pelo navegador.
     - O funcionário pode registrar o seu ponto após autenticado no seu login
     - Visualizar seus pontos registrados
 
-
 ## Requisitos do ambiente de desenvolvimento
 
 -   Docker
@@ -89,3 +88,22 @@ Sistema de registro de ponto de funcionários pelo navegador.
     ```
 
     - Isso deverá iniciar o projeto usando Docker (http://localhost).
+
+
+## Let's go
+
+- Para acessar o sistema basta se cadastrar. O primeiro registro é sempre administrador:
+
+![alt text](image-3.png)
+
+- Ao logar você ja pode registrar pontos:
+
+![alt text](image-1.png)
+
+- Ou crie o acesso dos seus funcionários:
+
+![alt text](image-2.png)
+
+- Depois é só logar no sistema com qualquer perfil e se surpreender
+
+![alt text](image.png)
