@@ -3,24 +3,22 @@
 use Livewire\Volt\Component;
 use App\Models\User;
 use Mary\Traits\Toast;
-use Livewire\WithFileUploads; 
 use Livewire\Attributes\Rule; 
 
 new class extends Component {
     
-    use Toast, WithFileUploads;
+    use Toast;
 
     public User $user;
-
-    #[Rule('required')] 
-    public string $name = '';
- 
-    #[Rule('required|email')]
+    public string $name = ''; 
     public string $email = '';
-
-    #[Rule('required')]
     public string $password = '';
-
+    public string $cpf = '';
+    public string $date_of_birth = '';
+    public string $cep = '';
+    public string $full_address = '';
+    public string $complement = '';
+    public string $position = '';
     public bool $showPassword = false;
 
     public function mount(): void
@@ -35,7 +33,21 @@ new class extends Component {
     
     public function save(): void
     {
-        $data = $this->validate();
+
+        $data = $this->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'cpf' => ['required', function ($attribute, $value, $fail) {
+                if (!CpfHelper::isValidCpf($value)) {
+                    $fail(__('validation.cpf'));
+                }
+            }],
+            'date_of_birth' => 'required|date',
+            'cep' => 'required',
+            'full_address' => 'required',
+            'position' => 'required',
+        ]);
     
         $this->user->update($data);
 
@@ -82,7 +94,12 @@ new class extends Component {
                 <x-header title="{{ __('users.detail') }}" subtitle="{{ __('users.details') }}" size="text-2xl" />
             </div>
             <div class="col-span-3 grid gap-3">
-                
+                <x-input label="{{ __('users.cpf') }}" wire:model="cpf" x-mask="999.999.999-99"/>
+                <x-input label="{{ __('users.date_of_birth') }}" type="date" wire:model="date_of_birth" />
+                <x-input label="{{ __('users.cep') }}" wire:model="cep" x-mask="99.999-999" />
+                <x-input label="{{ __('users.full_address') }}" wire:model="full_address" />
+                <x-input label="{{ __('users.complement') }}" wire:model="complement" />
+                <x-input label="{{ __('users.position') }}" wire:model="position" />
             </div>
         </div>
         <x-slot:actions>

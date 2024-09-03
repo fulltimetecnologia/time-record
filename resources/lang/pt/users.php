@@ -21,4 +21,12 @@ return [
     'save' => 'Salvar',
     'success' => 'Usuário salvo com sucesso.',
     'success_edit' => 'Usuário editado com sucesso.',
+    'cpf' => 'CPF',
+    'date_of_birth' => 'Data de nascimento',
+    'cep' => 'CEP',
+    'full_address' => 'Endereço completo',
+    'complement' => 'Complemento',
+    'position' => 'Cargo',
+    'unauthorized' => 'Não autorizado.',
+    'perfil' => 'Perfil',
 ];
