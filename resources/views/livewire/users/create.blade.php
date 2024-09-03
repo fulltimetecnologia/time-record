@@ -5,6 +5,8 @@ use App\Models\User;
 use Mary\Traits\Toast;
 use Livewire\Attributes\Rule;
 use App\Helpers\CpfHelper;
+use App\Helpers\MaskHelper;
+use Illuminate\Support\Facades\Http;
 
 new class extends Component {
     
@@ -29,9 +31,11 @@ new class extends Component {
     
     public function save(): void
     {
-        
+        $this->fetchAddressFromCep();
+
         if (!auth()->user()->is_admin) {
-            $this->error(__('users.unauthorized'), redirectTo: '/users');
+            session()->flash('message', __('users.unauthorized'));
+            redirect('/users');
             return;
         }
 
@@ -42,6 +46,9 @@ new class extends Component {
             'cpf' => ['required', function ($attribute, $value, $fail) {
                 if (!CpfHelper::isValidCpf($value)) {
                     $fail(__('validation.cpf'));
+                }
+                if (User::where('cpf', $value)->exists()) {
+                    $fail(__('validation.cpf_exists'));
                 }
             }],
             'date_of_birth' => 'required|date',
@@ -63,6 +70,26 @@ new class extends Component {
         $this->success(__('users.success'), redirectTo: '/users');
     }
 
+    public function fetchAddressFromCep(): void
+    {
+        $cep = MaskHelper::remove($this->cep);
+        $this->validate(['cep' => 'required']);
+        $response = Http::get("https://viacep.com.br/ws/{$cep}/json/");
+        if ($response->successful()) {
+            $addressData = $response->json();
+
+            $logradouro = $addressData['logradouro'] . ', ' ?? '';
+            $bairro = $addressData['bairro'] . ', ' ?? '';
+            $localidade = $addressData['localidade'] . ' - ' ?? '';
+            $uf = $addressData['uf'] ?? '';
+            
+            $this->full_address = $logradouro . $bairro . $localidade . $uf;
+            $this->complement = $addressData['complemento'] ?? '';
+        } else {
+            $this->error(__('validation.cep_invalid'));
+        }
+    }
+
     public function togglePasswordVisibility()
     {
         $this->showPassword = !$this->showPassword;
@@ -79,11 +106,11 @@ new class extends Component {
                 <x-header title="{{ __('users.basic') }}" subtitle="{{ __('users.basic_info') }}" size="text-2xl" />
             </div>
             <div class="col-span-3 grid gap-3">
-                <x-input label="{{ __('users.name') }}" wire:model="name" />
-                <x-input label="{{ __('users.email') }}" wire:model="email" />
+                <x-input label="{{ __('users.name') }} *" wire:model="name" />
+                <x-input label="{{ __('users.email') }} *" wire:model="email" />
                 <div class="relative">
                     <x-input 
-                        label="{{ __('users.password') }}" 
+                        label="{{ __('users.password') }} *" 
                         type="{{ $showPassword ? 'text' : 'password' }}" 
                         wire:model="password"
                     />
@@ -103,12 +130,21 @@ new class extends Component {
                 <x-header title="{{ __('users.detail') }}" subtitle="{{ __('users.details') }}" size="text-2xl" />
             </div>
             <div class="col-span-3 grid gap-3">
-                <x-input label="{{ __('users.cpf') }}" wire:model="cpf" x-mask="999.999.999-99"/>
-                <x-input label="{{ __('users.date_of_birth') }}" type="date" wire:model="date_of_birth" />
-                <x-input label="{{ __('users.cep') }}" wire:model="cep" x-mask="99.999-999" />
-                <x-input label="{{ __('users.full_address') }}" wire:model="full_address" />
+                <x-input label="{{ __('users.cpf') }} *" wire:model="cpf" x-mask="999.999.999-99"/>
+                <x-input label="{{ __('users.date_of_birth') }} *" type="date" wire:model="date_of_birth" />
+                <div class="relative">
+                    <x-input label="{{ __('users.cep') }} *" wire:model="cep" x-mask="99.999-999" />
+                    <button 
+                        type="button" 
+                        wire:click="fetchAddressFromCep" 
+                        class="absolute right-2 top-[65%] transform -translate-y-1/2"
+                    >
+                         <x-icon name="o-magnifying-glass" />
+                    </button>
+                </div>
+                <x-input label="{{ __('users.full_address') }} *" wire:model="full_address" />
                 <x-input label="{{ __('users.complement') }}" wire:model="complement" />
-                <x-input label="{{ __('users.position') }}" wire:model="position" />
+                <x-input label="{{ __('users.position') }} *" wire:model="position" />
             </div>
         </div>
         <x-slot:actions>

@@ -38,6 +38,15 @@ new class extends Component {
 
     public function headers(): array
     {
+        if (auth()->user()->is_admin) {
+            return [
+                ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
+                ['key' => 'name', 'label' => __('users.filters'), 'class' => 'w-64'],
+                ['key' => 'email', 'label' =>  __('users.email'), 'sortable' => false],
+                ['key' => 'subordinate', 'label' =>  __('users.subordinate'), 'sortable' => false],
+                ['key' => 'perfil', 'label' => __('users.perfil'), 'class' => 'w-32'], 
+            ];
+        }
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'name', 'label' => __('users.filters'), 'class' => 'w-64'],
@@ -86,9 +95,20 @@ new class extends Component {
             @endif
         </x-slot:actions>
     </x-header>
+    @if (session()->has('message'))
+        <x-alert icon="o-exclamation-triangle" dismissible>
+            {{ session('message') }}
+        </x-alert>
+        <br/>
+    @endif
     <x-card>
         <x-table :headers="$headers" :rows="$users" :sort-by="$sortBy" with-pagination link="users/{id}/edit">
             <div class="flex gap-3 mt-3">
+                @scope('cell_subordinate', $user)
+                    @if ( $user['id'] !== auth()->user()->id )
+                        <x-badge value="{{ $user['user_admin_id'] == auth()->user()->id ? 'Sim' : 'Não' }}" class="{{ $user['user_admin_id'] == auth()->user()->id ? 'bg-purple-500' : 'bg-gray-500' }} text-white" />
+                    @endif
+                @endscope
                 @scope('cell_perfil', $user)                                                    
                     <x-badge value="{{ $user['is_admin'] ? 'Administrador' : 'Funcionário' }}" class="{{ $user['is_admin'] ? 'bg-green-500' : 'bg-blue-500' }} text-white" />
                 @endscope

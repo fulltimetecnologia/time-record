@@ -29,4 +29,5 @@ return [
     'position' => 'Cargo',
     'unauthorized' => 'Não autorizado.',
     'perfil' => 'Perfil',
+    'subordinate' => 'Subordinado?',
 ];
