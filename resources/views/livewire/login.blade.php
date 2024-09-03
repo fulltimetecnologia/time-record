@@ -38,31 +38,28 @@ class extends Component {
     }
 } ?>
 
-<div class="grid gap-8 md:grid-cols-3">
-    <div class="col-start-2 col-end-2">
-        <div class="text-center order-last md:order-first">
-            <img src="images/timeline.svg" width="250" class="mx-auto" alt="Timeline" />
-        </div>
-        <x-card title="{{ __('menu.home')}}" class="px-8" shadow separator>
-            <div class="mb-8">
-                Faça login para acessar o sistema e registrar seu ponto.
-            </div>
-            <x-form wire:submit="login">
-                <x-input label="{{ __('login.email') }}" wire:model="email" icon="o-envelope" inline />
-                <x-input label="{{ __('login.password') }}" wire:model="password" type="password" icon="o-key" inline />
-                <x-slot:actions>
-                    <x-button label="{{ __('login.create_account') }}" class="btn-ghost" link="/register" />
-                    <x-button label="{{ __('login.login') }}" type="submit" icon="o-paper-airplane" class="btn-primary text-white" spinner="login" />
-                </x-slot:actions>
-            </x-form>
-        </x-card>
-        <div class="mt-5">
-            <x-card shadow>
-                <x-icon name="o-lifebuoy" class="w-10 h-10" />
-                <div class="my-5">
-                    Contato do suporte: tecnologia.fulltime@gmail.com
-                </div>
-            </x-card>
-        </div>
+<div class="md:w-96 mx-auto mt-20">
+    <div class="avatar-container">
+        <img src="images/timeline.svg" width="250" class="mx-auto" alt="Timeline" />
     </div>
+    <x-card title="Login" class="px-8" shadow separator>
+        <div class="mb-8">
+            Faça login para acessar o sistema de registro de ponto.
+        </div>
+        <x-form wire:submit="login">
+            <x-input label="{{ __('login.email') }}" wire:model="email" icon="o-envelope" inline />
+            <x-input label="{{ __('login.password') }}" wire:model="password" type="password" icon="o-key" inline />
+            <x-slot:actions>
+                <x-button label="{{ __('login.create_account') }}" class="btn-ghost" link="/register" />
+                <x-button label="{{ __('login.login') }}" type="submit" icon="o-paper-airplane" class="btn-primary text-white" spinner="login" />
+            </x-slot:actions>
+        </x-form>
+    </x-card>
+    <style>
+        .avatar-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+    </style>
 </div>

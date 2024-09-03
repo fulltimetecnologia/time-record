@@ -42,6 +42,7 @@ new class extends Component {
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'name', 'label' => __('users.filters'), 'class' => 'w-64'],
             ['key' => 'email', 'label' =>  __('users.email'), 'sortable' => false],
+            ['key' => 'perfil', 'label' => __('users.perfil'), 'class' => 'w-32'], 
         ];
     }
  
@@ -49,6 +50,7 @@ new class extends Component {
     {
         return User::query()
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
+            ->when(!auth()->user()->is_admin, fn(Builder $q) => $q->where('id', auth()->user()->id))
             ->orderBy(...array_values($this->sortBy))
             ->paginate(5);
     }
@@ -79,17 +81,23 @@ new class extends Component {
         </x-slot:middle>
         <x-slot:actions>
             <x-button label="{{__('users.filters')}}" @click="$wire.drawer = true" responsive icon="o-funnel" :badge="$this->countAppliedFilters()" />
-            <x-button label="{{__('users.create')}}" link="/users/create" responsive icon="o-plus" class="btn-primary" /> 
+            @if (auth()->user()->is_admin)
+                <x-button label="{{__('users.create')}}" link="/users/create" responsive icon="o-plus" class="btn-primary" /> 
+            @endif
         </x-slot:actions>
     </x-header>
     <x-card>
         <x-table :headers="$headers" :rows="$users" :sort-by="$sortBy" with-pagination link="users/{id}/edit">
-            @scope('cell_avatar', $user)                                                    
-                <x-avatar image="{{ $user->avatar ?? '/empty-user.jpg' }}" class="!w-10" />
-            @endscope
-            @scope('actions', $user)
-                <x-button icon="o-trash" wire:click="delete({{ $user['id'] }})" wire:confirm="{{__('users.confirm')}}" spinner class="btn-ghost btn-sm text-red-500" />
-            @endscope
+            <div class="flex gap-3 mt-3">
+                @scope('cell_perfil', $user)                                                    
+                    <x-badge value="{{ $user['is_admin'] ? 'Administrador' : 'Funcionário' }}" class="{{ $user['is_admin'] ? 'bg-green-500' : 'bg-blue-500' }} text-white" />
+                @endscope
+                @scope('actions', $user)
+                    @if (auth()->user()->is_admin && $user['id'] == auth()->user()->id || $user['user_admin_id'] == auth()->user()->id)
+                        <x-button icon="o-trash" wire:click="delete({{ $user['id'] }})" wire:confirm="{{__('users.confirm')}}" spinner class="btn-ghost btn-sm text-red-500" />
+                    @endif
+                @endscope
+            </div>
         </x-table>
     </x-card>
     <x-drawer wire:model="drawer" title="{{__('users.filters')}}" right separator with-close-button class="lg:w-1/3">

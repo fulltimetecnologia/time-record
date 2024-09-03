@@ -21,4 +21,12 @@ return [
     'save' => 'Save',
     'success' => 'User save with success.',
     'success_edit' => 'User edited with success.',
+    'cpf' => 'CPF',
+    'date_of_birth' => 'Date of birth',
+    'cep' => 'CEP',
+    'full_address' => 'Full address',
+    'complement' => 'Complement',
+    'position' => 'Position',
+    'unauthorized' => 'Unauthorized.',
+    'perfil' => 'Perfil',
 ];
