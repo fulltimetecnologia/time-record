@@ -29,4 +29,5 @@ return [
     'position' => 'Position',
     'unauthorized' => 'Unauthorized.',
     'perfil' => 'Perfil',
+    'subordinate' => 'Subordinate?',
 ];

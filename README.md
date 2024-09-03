@@ -2,7 +2,15 @@
 
 Sistema de registro de ponto de funcionários pelo navegador.
 
-O Sistema tem dois níveis de acesso, sendo eles:
+-> Multi-Idioma (En, pt-Br): Testar alterando no .env
+    ```
+        APP_LOCALE=en
+    ```
+    or 
+    ```
+        APP_LOCALE=pt
+    ```
+-> O Sistema tem dois níveis de acesso, sendo eles:
 
 1 - Administrador (Gestor)
 
@@ -17,6 +25,7 @@ O Sistema tem dois níveis de acesso, sendo eles:
 
     - O funcionário pode registrar o seu ponto após autenticado no seu login
     - Visualizar seus pontos registrados
+
 
 ## Requisitos do ambiente de desenvolvimento
 
@@ -33,6 +42,16 @@ O Sistema tem dois níveis de acesso, sendo eles:
     ```
     cd time-record
     ```
+
+        Nota:
+            - Em caso de reinstação remover pastas:
+
+            ```
+            rm -rf node_modules
+            ```
+            ```
+            rm -rf vendor
+            ```
 
     - Copiar o arquivo .env.exemple para .env
 
