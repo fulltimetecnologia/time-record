@@ -13,7 +13,10 @@ new class extends Component {
 
     use Toast, WithPagination;
 
+    const int PER_PAGE = 10;
     public string $search = '';
+    public string $start_date = '';
+    public string $end_date = '';
     public bool $drawer = false;
     public array $sortBy = ['column' => 'created_at', 'direction' => 'desc'];
 
@@ -44,30 +47,79 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'user.name', 'label' => __('time-record.employee'), 'class' => 'w-64'],
-            ['key' => 'created_at', 'label' => __('time-record.date'), 'sortable' => false],
-            ['key' => 'start_at', 'label' => __('time-record.start'), 'sortable' => false],
-            ['key' => 'end_at', 'label' => __('time-record.end'), 'sortable' => false],
+            ['key' => 'name', 'label' => __('time-record.employee'), 'class' => 'w-64'],
+            ['key' => 'position', 'label' => __('time-record.position'), 'class' => 'w-64'],
+            ['key' => 'age', 'label' => __('time-record.age'), 'sortable' => false],
+            ['key' => 'admin', 'label' => __('time-record.admin'), 'sortable' => false],
+            ['key' => 'date', 'label' => __('time-record.date'), 'sortable' => false],
+            ['key' => 'start', 'label' => __('time-record.start'), 'sortable' => false],
+            ['key' => 'end', 'label' => __('time-record.end'), 'sortable' => false],
         ];
     }
 
+    /**
+     * @return LengthAwarePaginator
+     *
+     * ### SQL Query PURO: ###
+     *
+     *   SELECT 
+     *       u.id,
+     *       u.name,
+     *       u.email, 
+     *       u.position, 
+     *       TIMESTAMPDIFF(YEAR, u.date_of_birth, CURDATE()) AS age,
+     *       u2.name AS admin,
+     *       DATE(tr.end_at) AS date,
+     *       TIME(tr.start_at) AS start,
+     *       TIME(tr.end_at) AS end
+     *   FROM 
+     *       users u
+     *   INNER JOIN 
+     *       time_records tr ON tr.user_id = u.id
+     *   LEFT JOIN 
+     *       users u2 ON u2.id = u.user_admin_id
+     *   WHERE 
+     *       u.name LIKE '%$this->search%' OR
+     *       u.email LIKE '%$this->search%' OR
+     *       u.position LIKE '%$this->search%' OR
+     *       u2.name LIKE '%$this->search%' OR
+     *       DATE(tr.end_at) LIKE '%$this->search%' OR
+     *       TIME(tr.start_at) LIKE '%$this->search%' OR
+     *       TIME(tr.end_at) LIKE '%$this->search%'
+     *       TIMESTAMPDIFF(YEAR, u.date_of_birth, CURDATE()) LIKE '%$this->search%';
+     */
     public function timeRecords(): LengthAwarePaginator
     {
-        // return DB::raw("SELECT tr.*, u.*
-        // FROM time_records tr
-        // JOIN users u ON tr.user_id = u.id
-        // WHERE u.name LIKE '%".$this->search."%'
-        // AND (".auth()->user()->is_admin." OR tr.user_id = ".auth()->user()->id.")
-        // ORDER BY tr.created_at DESC
-        // LIMIT 5 OFFSET 0"
-        // );
+        $query = DB::table('users as u')
+            ->selectRaw('
+                u.id,
+                u.name,
+                u.email,
+                u.position,
+                TIMESTAMPDIFF(YEAR, u.date_of_birth, CURDATE()) AS age,
+                u2.name AS admin,
+                DATE(tr.start_at) AS date,
+                TIME(tr.start_at) AS start,
+                TIME(tr.end_at) AS end
+            ')
+            ->join('time_records as tr', 'tr.user_id', '=', 'u.id')
+            ->leftJoin('users as u2', 'u2.id', '=', 'u.user_admin_id')
+            ->where(function ($query) {
+                $search = $this->search;
+                $query->where('u.name', 'like', "%$search%")
+                    ->orWhere('u.email', 'like', "%$search%")
+                    ->orWhere('u.position', 'like', "%$search%")
+                    ->orWhere('u2.name', 'like', "%$search%")
+                    ->orWhereRaw('DATE(tr.start_at) LIKE ?', ["%$search%"])
+                    ->orWhereRaw('TIME(tr.start_at) LIKE ?', ["%$search%"])
+                    ->orWhereRaw('TIME(tr.end_at) LIKE ?', ["%$search%"])
+                    ->orWhereRaw('TIMESTAMPDIFF(YEAR, u.date_of_birth, CURDATE()) LIKE ?', ["%$search%"]);
+            })
+            ->when($this->start_date && $this->end_date, function ($query) {
+                $query->whereBetween('tr.start_at', [$this->start_date, $this->end_date]);
+            });
 
-        return TimeRecord::query()
-            ->with('user')
-            ->when($this->search, fn(Builder $q) => $q->where('user.name', 'like', "%$this->search%"))
-            ->when(!auth()->user()->is_admin, fn(Builder $q) => $q->where('user_id', auth()->user()->id))
-            ->orderBy(...array_values($this->sortBy))
-            ->paginate(5);
+        return $query->paginate(self::PER_PAGE);
     }
 
     public function with(): array
@@ -82,6 +134,12 @@ new class extends Component {
     {
         $count = 0;
         if ($this->search) {
+            $count++;
+        }
+        if ($this->start_date) {
+            $count++;
+        }
+        if ($this->end_date) {
             $count++;
         }
         return $count;

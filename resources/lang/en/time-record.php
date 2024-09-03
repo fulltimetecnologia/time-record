@@ -12,4 +12,8 @@ return [
     'date' => 'Date',
     'start' => 'Start',
     'end' => 'End', 
+    'position' => 'Position',
+    'actions' => 'Actions',
+    'age' => 'Age',
+    'admin' => 'Administrator',
 ];

@@ -12,4 +12,8 @@ return [
     'date' => 'Data',
     'start' => 'Entrada',
     'end' => 'Saída',
+    'position' => 'Cargo',
+    'actions' => 'Ações',
+    'age' => 'Idade',
+    'admin' => 'Administrador',
 ];

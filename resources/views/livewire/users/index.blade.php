@@ -41,7 +41,7 @@ new class extends Component {
         if (auth()->user()->is_admin) {
             return [
                 ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-                ['key' => 'name', 'label' => __('users.filters'), 'class' => 'w-64'],
+                ['key' => 'name', 'label' => __('users.name'), 'class' => 'w-64'],
                 ['key' => 'email', 'label' =>  __('users.email'), 'sortable' => false],
                 ['key' => 'subordinate', 'label' =>  __('users.subordinate'), 'sortable' => false],
                 ['key' => 'perfil', 'label' => __('users.perfil'), 'class' => 'w-32'], 
@@ -58,7 +58,7 @@ new class extends Component {
     public function users(): LengthAwarePaginator
     {
         return User::query()
-            ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
+            ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%")->orWhere('email', 'like', "%$this->search%"))
             ->when(!auth()->user()->is_admin, fn(Builder $q) => $q->where('id', auth()->user()->id))
             ->orderBy(...array_values($this->sortBy))
             ->paginate(5);
@@ -89,7 +89,6 @@ new class extends Component {
             <x-input placeholder="{{__('users.search')}}" wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="{{__('users.filters')}}" @click="$wire.drawer = true" responsive icon="o-funnel" :badge="$this->countAppliedFilters()" />
             @if (auth()->user()->is_admin)
                 <x-button label="{{__('users.create')}}" link="/users/create" responsive icon="o-plus" class="btn-primary" /> 
             @endif
@@ -120,13 +119,4 @@ new class extends Component {
             </div>
         </x-table>
     </x-card>
-    <x-drawer wire:model="drawer" title="{{__('users.filters')}}" right separator with-close-button class="lg:w-1/3">
-        <div class="grid gap-5"> 
-            <x-input placeholder="{{__('users.search')}}" wire:model.live.debounce="search" icon="o-magnifying-glass" @keydown.enter="$wire.drawer = false" />
-        </div>
-        <x-slot:actions>
-            <x-button label="{{__('users.reset')}}" icon="o-x-mark" wire:click="clear" spinner />
-            <x-button label="{{__('users.done')}}" icon="o-check" class="btn-primary" @click="$wire.drawer = false" />
-        </x-slot:actions>
-    </x-drawer>
 </div>
