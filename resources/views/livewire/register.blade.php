@@ -59,6 +59,7 @@ class extends Component {
     <x-card title="Criar conta" class="px-8" shadow separator>
         <div class="mb-8">
             Crie sua conta e acesse o sistema como administrador.
+            Ao acessar lembre-se de atualizar suas informações.
         </div>
         <x-form wire:submit="register">
             <x-input label="{{ __('register.name') }}" wire:model="name" icon="o-user" inline />
